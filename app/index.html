@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0f14">
+<title>EO Play</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
+<style>
+  :root{ --bg:#0b0f14; --panel:#121a23; --panel2:#1a2733; --txt:#e9eef3; --mut:#8aa0b2; --acc:#3aa0ff; --line:#22303d; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; height:100%; background:var(--bg); color:var(--txt);
+    font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body{ display:flex; flex-direction:column; overflow:hidden; }
+  header{ display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--panel);
+    border-bottom:1px solid var(--line); }
+  header .logo{ font-weight:800; letter-spacing:.5px; }
+  header .logo b{ color:var(--acc); }
+  header .sp{ flex:1; }
+  header button{ background:var(--panel2); color:var(--txt); border:1px solid var(--line);
+    border-radius:8px; padding:8px 12px; font-size:14px; }
+  #player{ position:relative; background:#000; width:100%; aspect-ratio:16/9; }
+  #player video{ width:100%; height:100%; background:#000; display:block; }
+  #pstatus{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    color:var(--mut); font-size:14px; pointer-events:none; text-align:center; padding:0 20px; }
+  main{ flex:1; display:flex; min-height:0; }
+  #cats{ width:38%; max-width:240px; overflow:auto; border-right:1px solid var(--line); background:var(--panel); }
+  #chans{ flex:1; overflow:auto; }
+  .row{ padding:11px 13px; border-bottom:1px solid var(--line); display:flex; gap:10px; align-items:center; }
+  #cats .row{ font-size:14px; color:var(--mut); }
+  #cats .row.sel{ color:var(--txt); background:var(--panel2); border-left:3px solid var(--acc); }
+  #chans .row img{ width:34px; height:34px; object-fit:contain; background:#0006; border-radius:6px; flex:none; }
+  #chans .row .nm{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #chans .row.play{ background:var(--panel2); }
+  .empty{ color:var(--mut); padding:24px; text-align:center; }
+  #search{ width:100%; border:0; border-bottom:1px solid var(--line); background:var(--panel);
+    color:var(--txt); padding:11px 13px; font-size:14px; }
+  /* setup modal */
+  #setup{ position:fixed; inset:0; background:#000a; display:none; align-items:center; justify-content:center; padding:18px; z-index:9; }
+  #setup.show{ display:flex; }
+  #setup .box{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px; width:100%; max-width:420px; }
+  #setup h2{ margin:0 0 4px; }
+  #setup p{ color:var(--mut); margin:0 0 14px; font-size:13px; }
+  #setup label{ display:block; font-size:12px; color:var(--mut); margin:10px 0 4px; }
+  #setup input{ width:100%; padding:11px; border-radius:9px; border:1px solid var(--line);
+    background:var(--panel2); color:var(--txt); font-size:14px; }
+  #setup .err{ color:#ff6b6b; font-size:13px; min-height:18px; margin-top:8px; }
+  #setup button{ width:100%; margin-top:14px; padding:12px; border:0; border-radius:9px;
+    background:var(--acc); color:#001; font-weight:700; font-size:15px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">EO<b>Play</b></div>
+  <div class="sp"></div>
+  <button id="btnSetup">Lista</button>
+</header>
+
+<div id="player"><video id="video" playsinline controls></video><div id="pstatus">Elige un canal</div></div>
+
+<main>
+  <div id="cats"><div class="empty">Cargando…</div></div>
+  <div id="chans" style="display:flex;flex-direction:column">
+    <input id="search" placeholder="Buscar canal…" autocomplete="off">
+    <div id="chanlist" style="flex:1;overflow:auto"><div class="empty">Elige una categoría</div></div>
+  </div>
+</main>
+
+<div id="setup"><div class="box">
+  <h2>Tu lista</h2>
+  <p>Pega tu URL Xtream (la del <code>get.php</code>) o rellena servidor, usuario y contraseña. Se guarda solo en este dispositivo.</p>
+  <label>URL completa (opcional)</label>
+  <input id="iUrl" placeholder="http://servidor:puerto/get.php?username=...&password=...">
+  <label>Servidor (http://host:puerto)</label>
+  <input id="iHost" placeholder="http://c147.ejemplo.net:2083">
+  <label>Usuario</label><input id="iUser" autocapitalize="off">
+  <label>Contraseña</label><input id="iPass" autocapitalize="off">
+  <div class="err" id="serr"></div>
+  <button id="iSave">Guardar y cargar</button>
+</div></div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
